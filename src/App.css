@@ -1,10 +1,16 @@
-*,
-*:before,
-*:after {
-    box-sizing: border-box;
-}
-
 body {
     background-color: #0d0d1d;
-    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+#root {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+    color: #fff;
 }
