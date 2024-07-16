@@ -22,10 +22,7 @@ export const TodoList: React.FC = () => {
             <ul>
                 {tasks.map(task => (
                     <li key={task.id}>
-                        <label>
-                            <input type="checkbox" checked={task.completed} readOnly />
-                            {task.title}
-                        </label>
+                        {task.title}
                     </li>
                 ))}
             </ul>

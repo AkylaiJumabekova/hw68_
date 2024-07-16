@@ -12,15 +12,21 @@ interface TodoState {
     tasks: Task[];
     loading: boolean;
     error: boolean;
+    inputValue: string;
+    isCreating: boolean;
 }
 
 const initialState: TodoState = {
     tasks: [],
     loading: false,
     error: false,
+    inputValue: '',
+    isCreating: false,
 };
 
-export const fetchTasks = createAsyncThunk<Task[], void, { state: RootState }>('todo/fetchTasks', async () => {
+export const fetchTasks = createAsyncThunk<Task[], void, { state: RootState }>(
+    'todo/fetchTasks',
+    async () => {
         const response = await axiosApi.get<{ [key: string]: Task }>('/tasks.json');
         return Object.keys(response.data || {}).map((key) => ({
             ...response.data[key],
@@ -29,10 +35,25 @@ export const fetchTasks = createAsyncThunk<Task[], void, { state: RootState }>('
     }
 );
 
+export const createTask = createAsyncThunk<void, { title: string }, { state: RootState }>(
+    'todo/createTask',
+    async (taskData, { dispatch }) => {
+        await axiosApi.post('/tasks.json', {
+            ...taskData,
+            completed: false,
+        });
+        dispatch(fetchTasks());
+    }
+);
+
 export const todoSlice = createSlice({
     name: 'todo',
     initialState,
-    reducers: {},
+    reducers: {
+        setInputValue: (state, action: PayloadAction<string>) => {
+            state.inputValue = action.payload;
+        },
+    },
     extraReducers: (builder) => {
         builder
             .addCase(fetchTasks.pending, (state) => {
@@ -46,9 +67,20 @@ export const todoSlice = createSlice({
             .addCase(fetchTasks.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
+            })
+            .addCase(createTask.pending, (state) => {
+                state.isCreating = true;
+                state.error = false;
+            })
+            .addCase(createTask.fulfilled, (state) => {
+                state.isCreating = false;
+            })
+            .addCase(createTask.rejected, (state) => {
+                state.isCreating = false;
+                state.error = true;
             });
     },
 });
 
+export const { setInputValue } = todoSlice.actions;
 export const todoReducer = todoSlice.reducer;
-export type { TodoState };
