@@ -56,9 +56,13 @@ export const deleteTask = createAsyncThunk<void, string, { state: RootState }>(
 
 export const toggleTask = createAsyncThunk<void, { id: string, completed: boolean }, { state: RootState }>(
     'todo/toggleTask',
-    async ({ id, completed }, { dispatch }) => {
-        await axiosApi.put(`/tasks/${id}.json`, { completed });
-        dispatch(fetchTasks());
+    async ({ id, completed }, { getState, dispatch }) => {
+        const { tasks } = getState().todo;
+        const task = tasks.find(task => task.id === id);
+        if (task) {
+            await axiosApi.put(`/tasks/${id}.json`, { ...task, completed });
+            dispatch(fetchTasks());
+        }
     }
 );
 

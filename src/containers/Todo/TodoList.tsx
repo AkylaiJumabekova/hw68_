@@ -14,21 +14,28 @@ export const TodoList: React.FC = () => {
         dispatch(fetchTasks());
     }, [dispatch]);
 
+    const handleDeleteTask = async (id: string) => {
+        await dispatch(deleteTask(id));
+        await dispatch(fetchTasks());
+    };
+
+    const handleToggleTask = async (id: string, completed: boolean) => {
+        await dispatch(toggleTask({ id, completed: !completed }));
+        await dispatch(fetchTasks());
+    };
+
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error loading tasks.</p>;
 
     return (
         <div>
-            <h2>Todo List</h2>
+            <h2>Todo List :</h2>
             <ul>
                 {tasks.map(task => (
                     <li key={task.id}>
                         <Checkbox
                             checked={task.completed}
-                            onChange={() => {
-                                dispatch(toggleTask({ id: task.id, completed: !task.completed }));
-                                dispatch(fetchTasks());
-                            }}
+                            onChange={() => handleToggleTask(task.id, task.completed)}
                         >
                             {task.title}
                         </Checkbox>
@@ -36,10 +43,8 @@ export const TodoList: React.FC = () => {
                             type="primary"
                             size="small"
                             danger
-                            onClick={() => {
-                                dispatch(deleteTask(task.id));
-                                dispatch(fetchTasks());
-                            }}
+                            style={{ marginLeft: '10px' }}
+                            onClick={() => handleDeleteTask(task.id)}
                         >
                             Delete
                         </Button>
