@@ -16,12 +16,10 @@ export const TodoList: React.FC = () => {
 
     const handleDeleteTask = async (id: string) => {
         await dispatch(deleteTask(id));
-        await dispatch(fetchTasks());
     };
 
     const handleToggleTask = async (id: string, completed: boolean) => {
         await dispatch(toggleTask({ id, completed: !completed }));
-        await dispatch(fetchTasks());
     };
 
     if (loading) return <p>Loading...</p>;
