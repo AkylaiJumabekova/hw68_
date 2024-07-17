@@ -54,6 +54,14 @@ export const deleteTask = createAsyncThunk<void, string, { state: RootState }>(
     }
 );
 
+export const toggleTask = createAsyncThunk<void, { id: string, completed: boolean }, { state: RootState }>(
+    'todo/toggleTask',
+    async ({ id, completed }, { dispatch }) => {
+        await axiosApi.put(`/tasks/${id}.json`, { completed });
+        dispatch(fetchTasks());
+    }
+);
+
 export const todoSlice = createSlice({
     name: 'todo',
     initialState,
@@ -95,6 +103,17 @@ export const todoSlice = createSlice({
                 state.loading = false;
             })
             .addCase(deleteTask.rejected, (state) => {
+                state.loading = false;
+                state.error = true;
+            })
+            .addCase(toggleTask.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+            })
+            .addCase(toggleTask.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(toggleTask.rejected, (state) => {
                 state.loading = false;
                 state.error = true;
             });
