@@ -1,12 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import axiosApi from '../../axiosApi';
 import type { RootState } from '../../app/store';
-
-interface Task {
-    id: string;
-    title: string;
-    completed: boolean;
-}
+import type { Task } from '../../types';
 
 interface TodoState {
     tasks: Task[];
