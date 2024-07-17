@@ -8,15 +8,15 @@ export const AddTaskForm: React.FC = () => {
     const inputValue = useSelector((state: RootState) => state.todo.inputValue);
     const isCreating = useSelector((state: RootState) => state.todo.isCreating);
 
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        dispatch(setInputValue(event.target.value));
+    const handleInputChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        await dispatch(setInputValue(event.target.value));
     };
 
     const handleFormSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
         if (inputValue !== '') {
             await dispatch(createTask({ title: inputValue }));
-            dispatch(setInputValue(''));
+            await dispatch(setInputValue(''));
         }
     };
 
@@ -29,7 +29,7 @@ export const AddTaskForm: React.FC = () => {
                     onChange={handleInputChange}
                     placeholder="Enter task title"
                 />
-                <button type="submit">
+                <button type="submit" disabled={isCreating}>
                     {isCreating ? 'Adding...' : 'Add Task'}
                 </button>
             </div>

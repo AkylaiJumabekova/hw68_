@@ -46,6 +46,14 @@ export const createTask = createAsyncThunk<void, { title: string }, { state: Roo
     }
 );
 
+export const deleteTask = createAsyncThunk<void, string, { state: RootState }>(
+    'todo/deleteTask',
+    async (taskId, { dispatch }) => {
+        await axiosApi.delete(`/tasks/${taskId}.json`);
+        dispatch(fetchTasks());
+    }
+);
+
 export const todoSlice = createSlice({
     name: 'todo',
     initialState,
@@ -77,6 +85,17 @@ export const todoSlice = createSlice({
             })
             .addCase(createTask.rejected, (state) => {
                 state.isCreating = false;
+                state.error = true;
+            })
+            .addCase(deleteTask.pending, (state) => {
+                state.loading = true;
+                state.error = false;
+            })
+            .addCase(deleteTask.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(deleteTask.rejected, (state) => {
+                state.loading = false;
                 state.error = true;
             });
     },
